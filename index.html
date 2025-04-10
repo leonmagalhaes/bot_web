@@ -267,6 +267,7 @@
       linhas.push(`Motivação: ${motivacoes[Math.floor(Math.random() * motivacoes.length)]}`);
 
       document.getElementById('resultado').innerHTML = '<strong>Personagem gerado:</strong><br>' + linhas.join('<br>');
+      enviarParaTelegram(linhas.join('\n'));
     }
 
     function gerarRetainer() {
@@ -287,6 +288,25 @@
       document.getElementById('resultado').innerHTML = '<strong>Retainer gerado:</strong><br>' + linhas.join('<br>');
 
     }
+    function enviarParaTelegram(texto) {
+      const botToken = '6474974078:AAG7EN_Ge8miT2fmOKDqn9tfJ9DrjyxXtNk';
+      const chatId = '-972353937'; // substitua pelo ID do seu grupo
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+        chat_id: chatId,
+        text: texto,
+        parse_mode: 'HTML'
+        })
+      })
+    .then(response => {
+      if (!response.ok) throw new Error('Erro ao enviar para o Telegram');
+    })
+    .catch(error => console.error('Erro ao enviar para o Telegram:', error));
+  }
   </script>
 </body>
 </html>
