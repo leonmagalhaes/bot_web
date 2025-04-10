@@ -34,7 +34,8 @@
 <body>
   <h1>Gerador de Personagem (OD2)</h1>
   <button onclick="gerarPersonagem()">Gerar Personagem</button>
-  <pre id="resultado">Clique no botão para gerar um personagem...</pre>
+  <button onclick="gerarRetainer()">Gerar Retainer</button>
+  <pre id="resultado">Clique em um botão para gerar um personagem ou retainer...</pre>
 
   <script>
     const augurios = [
@@ -87,7 +88,6 @@
 
     function gerarPersonagem() {
       let atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
-      let resultado = '';
       let totalMod = 0;
       let linhas = [];
 
@@ -106,7 +106,25 @@
       linhas.push(`Augúrio: ${augurios[Math.floor(Math.random() * augurios.length)]}`);
       linhas.push(`Motivação: ${motivacoes[Math.floor(Math.random() * motivacoes.length)]}`);
 
-      document.getElementById('resultado').textContent = linhas.join('\n');
+      document.getElementById('resultado').textContent = '*Personagem gerado:*\n' + linhas.join('\n');
+    }
+
+    function gerarRetainer() {
+      let atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
+      let totalMod = 0;
+      let linhas = [];
+
+      for (let attr of atributos) {
+        let val = rollAttribute();
+        let mod = calculateModifier(val);
+        totalMod += mod;
+        linhas.push(`${attr}: ${val} (Modificador: ${mod})`);
+      }
+
+      if (totalMod <= 0) return gerarRetainer(); // reroll
+
+      linhas.push(`\nTotal dos Modificadores: ${totalMod}`);
+      document.getElementById('resultado').textContent = '*Retainer gerado:*\n' + linhas.join('\n');
     }
   </script>
 </body>
