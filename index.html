@@ -246,60 +246,38 @@
           if (value === 18) return 3;
           return 0;
         }
-
+        
         function gerarPersonagem() {
-            let nomeJogador = prompt("Digite o nome do jogador:");
-            if (!nomeJogador) nomeJogador = "Anônimo";
-
-            let atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
-            let totalMod = 0;
-            let linhas = [];
-
+          let nomeJogador = prompt("Digite o nome do jogador:");
+          if (!nomeJogador) nomeJogador = "Anônimo";
+        
+          let atributos, totalMod;
+        
+          // Reroll loop separado
+          do {
+            atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
+            totalMod = 0;
+            linhas = [];
+        
             for (let attr of atributos) {
-                let val = rollAttribute();
-                let mod = calculateModifier(val);
-                totalMod += mod;
-                linhas.push(`*${attr}:* ${val} (Modificador: ${mod})`);
+              let val = rollAttribute();
+              let mod = calculateModifier(val);
+              totalMod += mod;
+              linhas.push(`*${attr}:* ${val} (Modificador: ${mod})`);
             }
-
-            if (totalMod <= 0){
-                gerarPersonagem();
-                return;
-            }// reroll
-
-            linhas.push(`\n*Total dos Modificadores:* ${totalMod}`);
-            linhas.push(`\n*Ouro:* ${rollAttribute() * 10}`);
-            linhas.push(`\n*Ocupação:* _${ocupacoes[Math.floor(Math.random() * ocupacoes.length)]}_`);
-            linhas.push(`\n*Augúrio:* _${augurios[Math.floor(Math.random() * augurios.length)]}_`);
-            linhas.push(`\n*Motivação:* _${motivacoes[Math.floor(Math.random() * motivacoes.length)]}_`);
-
-            const mensagemFinal = `<strong>Personagem gerado por:</strong> ${nomeJogador}<br>` + linhas.join('<br>');
-            const mensagemTelegram = `*Personagem gerado por:* ${nomeJogador}\n\n` + linhas.join('\n');
-
-            document.getElementById('resultado').innerHTML = mensagemFinal;
-            enviarParaTelegram(mensagemTelegram);
-        }
-
-        function gerarRetainer() {
-            let atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
-            let totalMod = 0;
-            let linhas = [];
-
-            for (let attr of atributos) {
-                let val = rollAttribute();
-                let mod = calculateModifier(val);
-                totalMod += mod;
-                linhas.push(`${attr}: ${val} (Modificador: ${mod})`);
-            }
-
-            if (totalMod <= 0){
-                gerarPersonagem();
-                return;
-            }// reroll
-
-            linhas.push(`\nTotal dos Modificadores: ${totalMod}`);
-            document.getElementById('resultado').innerHTML = '<strong>Retainer gerado:</strong><br>' + linhas.join('<br>');
-
+          } while (totalMod <= 0); // reroll só os dados
+        
+          linhas.push(`\n*Total dos Modificadores:* ${totalMod}`);
+          linhas.push(`\n*Ouro:* ${rollAttribute() * 10}`);
+          linhas.push(`\n*Ocupação:* _${ocupacoes[Math.floor(Math.random() * ocupacoes.length)]}_`);
+          linhas.push(`\n*Augúrio:* _${augurios[Math.floor(Math.random() * augurios.length)]}_`);
+          linhas.push(`\n*Motivação:* _${motivacoes[Math.floor(Math.random() * motivacoes.length)]}_`);
+        
+          const mensagemFinal = `<strong>Personagem gerado por:</strong> ${nomeJogador}<br>` + linhas.join('<br>');
+          const mensagemTelegram = `*Personagem gerado por:* ${nomeJogador}\n\n` + linhas.join('\n');
+        
+          document.getElementById('resultado').innerHTML = mensagemFinal;
+          enviarParaTelegram(mensagemTelegram);
         }
         function enviarParaTelegram(texto) {
             const botToken = '6474974078:AAG7EN_Ge8miT2fmOKDqn9tfJ9DrjyxXtNk';
