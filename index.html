@@ -289,7 +289,10 @@
                 linhas.push(`${attr}: ${val} (Modificador: ${mod})`);
             }
 
-            if (totalMod <= 0) return gerarRetainer(); // reroll
+            if (totalMod <= 0){
+                gerarPersonagem();
+                return;
+            }// reroll
 
             linhas.push(`\nTotal dos Modificadores: ${totalMod}`);
             document.getElementById('resultado').innerHTML = '<strong>Retainer gerado:</strong><br>' + linhas.join('<br>');
@@ -306,7 +309,7 @@
                 body: JSON.stringify({
                     chat_id: chatId,
                     text: texto,
-                    parse_mode: 'HTML'
+                    parse_mode: 'Markdown'
                 })
             })
                 .then(response => {
