@@ -249,7 +249,7 @@
         
         function gerarPersonagem() {
           let nomeJogador = prompt("Digite o nome do jogador:");
-          if (!nomeJogador) nomeJogador = "Anônimo";
+          if (nomeJogador === null || nomeJogador.trim() === "") return;
         
           let atributos, totalMod;
         
