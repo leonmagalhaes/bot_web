@@ -262,7 +262,10 @@
                 linhas.push(`*${attr}:* ${val} (Modificador: ${mod})`);
             }
 
-            if (totalMod <= 0) return gerarPersonagem(); // reroll
+            if (totalMod <= 0){
+                gerarPersonagem();
+                return;
+            }// reroll
 
             linhas.push(`\n*Total dos Modificadores:* ${totalMod}`);
             linhas.push(`\n*Ouro:* ${rollAttribute() * 10}`);
