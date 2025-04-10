@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Personagem</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    button {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.5rem 1rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    pre {
+      background: #eee;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerador de Personagem (OD2)</h1>
+  <button onclick="gerarPersonagem()">Gerar Personagem</button>
+  <pre id="resultado">Clique no botão para gerar um personagem...</pre>
+
+  <script>
+    const augurios = [
+      "A Mula: -100 cn de carga", "O Touro: +1 BA CaC", "O Lobo: +1 Dano CaC",
+      "O Tigre: +1 BA e Dano CaC com uma arma", "O Alvo: +1 BA à Distância",
+      "A Flecha: +1 Dano à Distância", "O Arqueiro: +1 BA e Dano à dist. com uma arma",
+      "O Castelo: +1 CA", "O Urso: +1 PV Máx por Nível", "O Coração: +1 PV Cura recebida",
+      "O Camelo: +1 Vigor", "A Boca: +1 Idioma", "O Pentagrama: +1 Acurácia Mágica",
+      "A Tocha: +1 Sanidade", "O Martelo: +1 Ação de Interlúdio", "O Relâmpago: +1d4 Dano em magia",
+      "A Flor: +1 Reação", "Os Gêmeos: +1 Capanga", "A Coroa: +1 Lealdade",
+      "O Berço: +1 em Save de Morte", "A Águia: +1 em Save de Contato",
+      "O Rio: +1 em Save de Paralisia", "O Sapo: +1 em Save de Irrupção",
+      "A Montanha: +1 em Save de Feitiço", "O Escudo: +1 em Save vs Efeito Mágico",
+      "O Macaco: +1 em Save vs Armadilhas", "A Mão Divina: +1 em todos os Saves",
+      "O Leviatã: -1 nas Salvaguardas do Alvo", "A Ânfora: +5% XP",
+      "O Grimório: +1 Espaço de Magia de Nível 1"
+    ];
+
+    const ocupacoes = [
+      "(H) Acólito(a) / (A) Açougueiro(a) / (E) Alquimétrico(a) / (P) Abatedor(a) de galinha",
+      "(H) Agricultor(a) / (A) Ferreiro(a) / (E) Herbalista / (P) Pescador(a)",
+      "(H) Xamã / (A) Runomante / (E) Xamã / (P) Guarda das colinas"
+    ];
+
+    const motivacoes = [
+      "Fugitivo: Por que fugiu? Como fugiu? De quem você foge.",
+      "Condenado ao Ostracismo: De onde você vem? Por que foi banido?",
+      "Missão religiosa: Quem é seu deus e qual sua missão?",
+      "Curiosidade: Qual é a grande pergunta que te move?",
+      "Autoconhecimento: Quais questões você busca resolver?",
+      "Ganância: Riqueza acima de tudo é o que te move. O que pretende fazer com as riquezas que encontrar?"
+    ];
+
+    function rollAttribute() {
+      return Math.floor(Math.random() * 6 + 1) +
+             Math.floor(Math.random() * 6 + 1) +
+             Math.floor(Math.random() * 6 + 1);
+    }
+
+    function calculateModifier(value) {
+      if (value === 3) return -3;
+      if (value <= 5) return -2;
+      if (value <= 8) return -1;
+      if (value <= 12) return 0;
+      if (value <= 15) return 1;
+      if (value <= 17) return 2;
+      if (value === 18) return 3;
+      return 0;
+    }
+
+    function gerarPersonagem() {
+      let atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
+      let resultado = '';
+      let totalMod = 0;
+      let linhas = [];
+
+      for (let attr of atributos) {
+        let val = rollAttribute();
+        let mod = calculateModifier(val);
+        totalMod += mod;
+        linhas.push(`${attr}: ${val} (Modificador: ${mod})`);
+      }
+
+      if (totalMod <= 0) return gerarPersonagem(); // reroll
+
+      linhas.push(`\nTotal dos Modificadores: ${totalMod}`);
+      linhas.push(`Ouro: ${rollAttribute() * 10}`);
+      linhas.push(`\nOcupação: ${ocupacoes[Math.floor(Math.random() * ocupacoes.length)]}`);
+      linhas.push(`Augúrio: ${augurios[Math.floor(Math.random() * augurios.length)]}`);
+      linhas.push(`Motivação: ${motivacoes[Math.floor(Math.random() * motivacoes.length)]}`);
+
+      document.getElementById('resultado').textContent = linhas.join('\n');
+    }
+  </script>
+</body>
+</html>
