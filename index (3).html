@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Personagem</title>
+    <style>
+        /* Corpo da página */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f9f9f9, #e3f2fd);
+            padding: 2rem;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        /* Título */
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Botões */
+        button {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.7rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background: #1976d2;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efeito hover nos botões */
+        button:hover {
+            background: #1565c0;
+            transform: translateY(-3px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Caixa de resultado */
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-size: 1rem;
+            color: #444;
+            box-shadow: inset 0px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Gerador de Personagem</h1>
+    <button onclick="gerarPersonagem()">Gerar Personagem</button>
+    <pre id="resultado">Clique em um botão para gerar um personagem ou retainer...</pre>
+
+    <script>
+        const augurios = [
+            "A Mula: -100 cn de carga",
+            "A Cabra: +1 Forçar Portas",
+            "O Touro: +1 BA CaC",
+            "O Lobo: +1 Dano CaC",
+            "O Tigre: +1 BA e Dano CaC com uma arma",
+            "O Alvo: +1 BA à Distância",
+            "A Flecha: +1 Dano à Distância",
+            "O Arqueiro: +1 BA e Dano à dist. com uma arma",
+            "O Castelo: +1 CA",
+            "O Urso: +1 PV Máx por Nível",
+            "O Coração: +1 PV Cura recebida",
+            "O Camelo: 1º Nível de fadiga ignorado",
+            "A Boca: +1 Idioma",
+            "O Pentagrama: -5% Falha Mágica",
+            "O Martelo: +1 Ação de Interlúdio",
+            "O Relâmpago: + 1d4 Dano em magia",
+            "A Flor: +1 Reação",
+            "Os Gêmeos: +1 Capanga",
+            "A Coroa: +1 Lealdade",
+            "O Berço: +1 em Save de Morte",
+            "A Águia: +1 em Save de Varinha",
+            "O Rio: +1 em Save de Paralisia",
+            "O Sapo: +1 em Save de Sopro",
+            "A Montanha: +1 em Save de Feitiço",
+            "O Escudo: +1 em Save vs Efeito Mágico",
+            "O Macaco: +1 em Save vs Efeito Não-Mágico",
+            "A Mão Divina: +1 em todos os Saves",
+            "O Leviatã: -1 nos Saves do Alvo",
+            "A Ânfora: +5% XP",
+            "O Grimório: +1 Espaço de Magia de Nível 1"
+        ];
+
+        const ocupacoes = [
+            "(H) Acólito(a) / (A) Açougueiro(a) / (E) Alquimétrico(a) / (P) Abatedor(a) de galinha",
+            "(H) Açougueiro(a) / (A) Açougueiro(a) / (E) Alquimétrico(a) / (P) Abatedor(a) de galinha",
+            "(H) Agricultor(a) / (A) Açougueiro(a) / (E) Alquimétrico(a) / (P) Abatedor(a) de galinha",
+            "(H) Alquimista / (A) Agiota / (E) Alquimétrico(a) / (P) Abatedor(a) de galinha",
+            "(H) Apicultor(a) / (A) Agiota / (E) Apicultor(a) / (P) Agiota",
+            "(H) Apostador(a) / (A) Agiota / (E) Apicultor(a) / (P) Agiota",
+            "(H) Apotecário(a) / (A) Alquimista / (E) Apicultor(a) / (P) Agiota",
+            "(H) Aprendiz de mago / (A) Alquimista / (E) Apicultor(a) / (P) Agiota",
+            "(H) Armadilheiro / (A) Alquimista / (E) Artesã(o) / (P) Armadilheiro",
+            "(H) Armeiro(a) / (A) Apicultor(a) / (E) Artesã(o) / (P) Armadilheiro",
+            "(H) Artesã(o) de Argila / (A) Apicultor(a) / (E) Artesã(o) / (P) Armadilheiro",
+            "(H) Astrólogo(a) / (A) Apicultor(a) / (E) Artesã(o) / (P) Armadilheiro",
+            "(H) Atendente / (A) Apotecário(a) / (E) Astrônomo / (P) Armadilheiro",
+            "(H) Ator ou Atriz / (A) Apotecário(a) / (E) Astrônomo / (P) Barqueiro(a)",
+            "(H) Babá / (A) Apotecário(a) / (E) Astrônomo / (P) Barqueiro(a)",
+            "(H) Barbeiro(a) / (A) Armeiro(a) / (E) Astrônomo / (P) Barqueiro(a)",
+            "(H) Barqueiro(a) / (A) Armeiro(a) / (E) Ator ou Atriz / (P) Barqueiro(a)",
+            "(H) Bauzeiro / (A) Armeiro(a) / (E) Ator ou Atriz / (P) Barqueiro(a)",
+            "(H) Bufão / (A) Bauzeiro(a) / (E) Ator ou Atriz / (P) Bom vivant",
+            "(H) Caçador de Recompensas / (A) Bauzeiro(a) / (E) Ator ou Atriz / (P) Bom vivant",
+            "(H) Caçador(a) / (A) Bauzeiro(a) / (E) Bandoleiro(a) / (P) Bom vivant",
+            "(H) Cafetão(ina) / (A) Burocrata / (E) Bandoleiro(a) / (P) Bom vivant",
+            "(H) Capanga valentão / (A) Burocrata / (E) Bandoleiro(a) / (P) Bom vivant",
+            "(H) Carrasco / (A) Cantor(a) de velório / (E) Bandoleiro(a) / (P) Caçador(a)",
+            "(H) Carroceiro(a) / (A) Cantor(a) de velório / (E) Cantor(a) / (P) Caçador(a)",
+            "(H) Cartomante / (A) Cantor(a) de velório / (E) Cantor(a) / (P) Caçador(a)",
+            "(H) Carvoeiro(a) / (A) Carvoeiro(a) / (E) Cantor(a) / (P) Caçador(a)",
+            "(H) Cavador(a) / (A) Carvoeiro(a) / (E) Cantor(a) / (P) Caçador(a) de recompensa",
+            "(H) Cavalariço(a) / (A) Carvoeiro(a) / (E) Cortesão(ã) / (P) Caçador(a) de recompensa",
+            "(H) Ceramista / (A) Cervejeiro(a) / (E) Cortesão(ã) / (P) Caçador(a) de recompensa",
+            "(H) Cervejeiro(a) / (A) Cervejeiro(a) / (E) Cortesão(ã) / (P) Caçador(a) de recompensa",
+            "(H) Cocheiro(a) / (A) Chaveiro(a) / (E) Escultor(a) / (P) Cervejeiro(a)",
+            "(H) Coletor(a) de impostos / (A) Chaveiro(a) / (E) Escultor(a) / (P) Cervejeiro(a)",
+            "(H) Contador(a) / (A) Chaveiro(a) / (E) Cozinheiro(a) / (P) Escultor(a) / (P) Cervejeiro(a)",
+            "(H) Contrabandista / (A) Cozinheiro(a) / (E) Étermante / (P) Cervejeiro(a)",
+            "(H) Coveiro / (A) Cozinheiro(a) / (E) Engenheiro(a) / (P) Étermante / (P) Construtor(a)",
+            "(H) Cozinheiro(a) / (A) Engenheiro(a) / (E) Étermante / (P) Construtor(a)",
+            "(H) Criador(a) de Animais / (A) Escavador(a) / (E) Étermante / (P) Construtor(a)",
+            "(H) Cultista / (A) Escavador(a) / (E) Exilado(a) / (P) Construtor(a)",
+            "(H) Curandeiro(a) / (A) Escavador(a) / (E) Exilado(a) / (P) Construtor(a)",
+            "(H) Curtidor(a) / (A) Escavador(a) / (E) Exilado(a) / (P) Cozinheiro(a)",
+            "(H) Dançarino(a) / (A) Escriba de runas / (E) Exilado(a) / (P) Cozinheiro(a)",
+            "(H) Diácono(a) / (A) Escriba de runas / (E) Falcoeiro(a) / (P) Cozinheiro(a)",
+            "(H) Eremita / (A) Escriba de runas / (E) Falcoeiro(a) / (P) Cozinheiro(a)",
+            "(H) Escravizado(a) recém liberto / (A) Exilado(a) / (E) Falcoeiro(a) / (P) Cozinheiro(a)",
+            "(H) Escriba / (A) Exilado(a) / (E) Falcoeiro(a) / (P) Fazendeiro(a)",
+            "(H) Escudeiro(a) / (A) Exilado(a) / (E) Filósofo(a) / (P) Fazendeiro(a)",
+            "(H) Estivador(a) / (A) Exterminador de pragas / (E) Filósofo(a) / (P) Fazendeiro(a)",
+            "(H) Exterminador(a) de pragas / (A) Exterminador de pragas / (E) Filósofo(a) / (P) Fazendeiro(a)",
+            "(H) Falsificador(a) / (A) Exterminador de pragas / (E) Filósofo(a) / (P) Fazendeiro(a)",
+            "(H) Fazedor(a) de corda / (A) Fazendeiro(a) de cogumelo / (E) Forrageiro(a) / (P) Garçom(nete)",
+            "(H) Feirante / (A) Fazendeiro(a) de cogumelo / (E) Forrageiro(a) / (P) Garçom(nete)",
+            "(H) Ferreiro(a) / (A) Fazendeiro(a) de cogumelo / (E) Forrageiro(a) / (P) Garçom(nete)",
+            "(H) Floricultor(a) / (A) Ferreiro(a) / (E) Forasteiro(a) / (P) Guarda das estradas / (P) Garçom(nete)",
+            "(H) Frei mendicante / (A) Ferreiro(a) / (E) Guarda das estradas / (P) Garçom(nete)",
+            "(H) Garçom(nete) / (A) Ferreiro(a) / (E) Guarda das estradas / (P) Gatuno(a)",
+            "(H) Garimpeiro(a) / (A) Guarda da forjaria / (E) Guarda das florestas / (P) Gatuno(a)",
+            "(H) Guarda / (A) Guarda da forjaria / (E) Guarda das florestas / (P) Gatuno(a)",
+            "(H) Guarda de caravana / (A) Guarda da forjaria / (E) Guarda das florestas / (P) Gatuno(a)",
+            "(H) Guarda florestal / (A) Guarda dos portões / (E) Herbalista / (P) Gatuno(a)",
+            "(H) Guarda-caça / (A) Guarda dos portões / (E) Herbalista / (P) Guarda das colinas",
+            "(H) Cuidador de Idosos / (A) Guardiã(o) das tradições (noviço) / (E) Herbalista / (P) Guarda das colinas",
+            "(H) Herbalista / (A) Guardiã(o) das tradições (noviço) / (E) Herbalista / (P) Guarda das colinas",
+            "(H) Ilustrador / (A) Guardiã(o) das tradições (noviço) / (E) Lanceiro(a) Real / (P) Guarda das colinas",
+            "(H) Inventor(a) / (A) Inventor(a) / (E) Lanceiro(a) Real / (P) Mensageiro(a)",
+            "(H) Joalheiro(a) / (A) Inventor(a) / (E) Lanceiro(a) Real / (P) Mensageiro(a)",
+            "(H) Lenhador / (A) Inventor(a) / (E) Lanceiro(a) Real / (P) Mensageiro(a)",
+            "(H) Limpador(a) de chaminés / (A) Joalheiro(a) / (E) Marinheiro(a) / (P) Mensageiro(a)",
+            "(H) Limpador(a) de esgoto / (A) Joalheiro(a) / (E) Marinheiro(a) / (P) Mensageiro(a)",
+            "(H) Luzeiro(a) / (A) Joalheiro(a) / (E) Marinheiro(a) / (P) Negociante",
+            "(H) Mágico / (A) Joalheiro(a) / (E) Marinheiro(a) / (P) Negociante",
+            "(H) Malabarista / (A) Limpador(a) de chaminés / (E) Mensageiro(a) / (P) Negociante",
+            "(H) Marinheiro(a) / (A) Limpador(a) de chaminés / (E) Mensageiro(a) / (P) Negociante",
+            "(H) Mensageiro(a) / (A) Limpador(a) de chaminés / (E) Mensageiro(a) / (P) Negociante",
+            "(H) Mercador(a) / (A) Luzeiro(a) / (E) Mensageiro(a) / (P) Sábio(a)",
+            "(H) Mercenário(a) / (A) Luzeiro(a) / (E) Mensageiro(a) / (P) Sábio(a)",
+            "(H) Minerador(a) / (A) Luzeiro(a) / (E) Mercador(a) / (P) Sábio(a)",
+            "(H) Mordomo / (A) Mercador(a) / (E) Mercador(a) / (P) Sábio(a)",
+            "(H) Musicista / (A) Mercador(a) / (E) Mercador(a) / (P) Tintureiro(a)",
+            "(H) Nobre emancipado / (A) Mercador(a) / (E) Mercador(a) / (P) Tintureiro(a)",
+            "(H) Noviço(a) / (A) Mercenário(a) / (E) Musicista / (P) Tintureiro(a)",
+            "(H) Parteira(o) / (A) Mercenário(a) / (E) Musicista / (P) Tintureiro(a)",
+            "(H) Pastor(a) / (A) Mercenário(a) / (E) Musicista / (P) Tintureiro(a)",
+            "(H) Pedinte / (A) Minerador / (E) Musicista / (P) Vaqueiro(a)",
+            "(H) Pedreiro / (A) Minerador / (E) Navegador(a) / (P) Vaqueiro(a)",
+            "(H) Peixeiro(a) / (A) Minerador / (E) Navegador(a) / (P) Vaqueiro(a)",
+            "(H) Pescador(a) / (A) Ourives / (E) Navegador(a) / (P) Vaqueiro(a)",
+            "(H) Pregoeiro(a) / (A) Ourives / (E) Navegador(a) / (P) Vaqueiro(a)",
+            "(H) Queijeiro(a) / (A) Ourives / (E) Viajante / (P) Vice-Xerife",
+            "(H) Sapateiro(a) / (A) Pastor(a) / (E) Viajante / (P) Vice-Xerife",
+            "(H) Selvagem / (A) Pastor(a) / (E) Viajante / (P) Vice-Xerife",
+            "(H) Soldado / (A) Pastor(a) / (E) Viajante / (P) Vice-Xerife",
+            "(H) Taxidermista / (A) Pedreiro(a) / (E) Vinhateiro(a) / (P) Vice-Xerife",
+            "(H) Tecelão(ã) / (A) Pedreiro(a) / (E) Vinhateiro(a) / (P) Vigia da fronteira",
+            "(H) Torturador(a) / (A) Pedreiro(a) / (E) Vinhateiro(a) / (P) Vigia da fronteira",
+            "(H) Treinador(a) de Animal / (A) Exterminador de pragas / (E) Vinhateiro(a) / (P) Vigia da fronteira",
+            "(H) Trombadinha / (A) Exterminador de pragas / (E) Xamã / (P) Vigia da fronteira",
+            "(H) Vaqueiro(a) / (A) Runomante / (E) Xamã / (P) Vigia da fronteira",
+            "(H) Vigia noturno / (A) Runomante / (E) Xamã / (P) Cervejeiro(a)",
+            "(H) Xamã / (A) Runomante / (E) Xamã / (P) Guarda das colinas"
+        ];
+
+        function rollAttribute() {
+            return Math.floor(Math.random() * 6 + 1) +
+                Math.floor(Math.random() * 6 + 1) +
+                Math.floor(Math.random() * 6 + 1);
+        }
+        function calculateModifier(value) {
+          if (value === 3) return -3;
+          if (value <= 5) return -2;
+          if (value <= 8) return -1;
+          if (value <= 12) return 0;
+          if (value <= 15) return 1;
+          if (value <= 17) return 2;
+          if (value === 18) return 3;
+          return 0;
+        }
+        
+        function gerarPersonagem() {
+          let nomeJogador = prompt("Digite o nome do jogador:");
+          if (nomeJogador === null || nomeJogador.trim() === "") return;
+        
+          let atributos, totalMod;
+        
+          // Reroll loop separado
+          do {
+            atributos = ['Força', 'Destreza', 'Constituição', 'Inteligência', 'Sabedoria', 'Carisma'];
+            totalMod = 0;
+            linhas = [];
+        
+            for (let attr of atributos) {
+              let val = rollAttribute();
+              let mod = calculateModifier(val);
+              totalMod += mod;
+              linhas.push(`*${attr}:* ${val} (Modificador: ${mod})`);
+            }
+          } while (totalMod <= 0); // reroll só os dados
+        
+          linhas.push(`\n*Total dos Modificadores:* ${totalMod}`);
+          linhas.push(`\n*Ouro:* ${rollAttribute() * 10}`);
+          linhas.push(`\n*Ocupação:* _${ocupacoes[Math.floor(Math.random() * ocupacoes.length)]}_`);
+          linhas.push(`\n*Augúrio:* _${augurios[Math.floor(Math.random() * augurios.length)]}_`);
+        
+          const mensagemFinal = `<strong>Personagem gerado por:</strong> ${nomeJogador}<br>` + linhas.join('<br>');
+          const mensagemTelegram = `*Personagem gerado por:* ${nomeJogador}\n\n` + linhas.join('\n');
+        
+          document.getElementById('resultado').innerHTML = mensagemFinal;
+          enviarParaTelegram(mensagemTelegram);
+        }
+        function enviarParaTelegram(texto) {
+            const partes = [
+            "86X84",         // ID do bot (parte 1)
+            "1599🐸38",      // ID do bot (parte 2)
+            "AAFt47mU",      // token (parte 1)
+            "RgJzP2☕h8",     // token (parte 2)
+            "arKhF7🍕E3",    // token (parte 3)
+            "-Yqnk2x",       // token (parte 4)
+            "TzAI"           // token (parte 5)
+            ];
+
+            const limpar = (str) => str.replace(/X|🐸|☕|🍕/g, '');
+
+            const t1 = limpar(partes[0]) + limpar(partes[1]); 
+            const t2 = limpar(partes[2]) + limpar(partes[3]) + limpar(partes[4]) + limpar(partes[5]) + limpar(partes[6]);
+
+            const botToken = `${t1}:${t2}`;
+            const chatId = '-1004211257381';
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: texto
+            })
+            })
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok || !data.ok) throw new Error(data.description || `HTTP ${response.status}`);
+            })
+            .catch(error => console.error('Erro ao enviar para o Telegram:', error));
+        }
+    </script>
+</body>
+ 
+</html>
